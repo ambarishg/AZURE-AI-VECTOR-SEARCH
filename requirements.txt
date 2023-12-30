@@ -1,0 +1,4 @@
+PyPDF2
+sentence-transformers
+python-dotenv
+azure-search-documents
