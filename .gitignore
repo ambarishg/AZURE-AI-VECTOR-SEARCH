@@ -1,2 +1,5 @@
 .venv
 .env
+__pycache__
+azure_open_ai/__pycache__
+backend/__pycache__
