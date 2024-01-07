@@ -7,3 +7,4 @@ openai
 tenacity
 langchain
 tiktoken
+streamlit_chat
