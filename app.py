@@ -34,7 +34,6 @@ NUMBER_OF_RESULTS_TO_RETURN = st.sidebar.slider("Number of Search Results to Ret
 def get_reply(user_input, content):
     conversation=[{"role": "system", "content": "Assistant is a great language model formed by OpenAI."}]
     reply = generate_reply_from_context(user_input, content, conversation)
-    
     return reply
 
 def get_details(results_content, results_source):
@@ -149,7 +148,9 @@ if qa_mode == "Chat" :
                 reply = get_reply(user_input, content)
             else:
                 # get the reply from the Langchain
-                reply,number_of_tokens = get_reply_langchain_st(user_input, content)
+                reply_langchain,number_of_tokens = get_reply_langchain_st(user_input, content)
+                reply = reply_langchain["response"]
+                st.write("Number of tokens used:", number_of_tokens)
 
             
             st.session_state.past.append(user_input)
