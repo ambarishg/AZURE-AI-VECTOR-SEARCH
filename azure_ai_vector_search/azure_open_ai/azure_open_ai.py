@@ -1,4 +1,3 @@
-
 from backend.config import *
 from openai import AzureOpenAI
 

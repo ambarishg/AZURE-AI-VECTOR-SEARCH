@@ -1,7 +1,7 @@
 .venv
 .env
 __pycache__
-azure_open_ai/__pycache__
-backend/__pycache__
+azure_ai_vector_search/azure_open_ai/__pycache__
+azure_ai_vector_search/backend/__pycache__
 
 .python_packages
