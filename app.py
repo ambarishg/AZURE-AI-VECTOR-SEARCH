@@ -1,7 +1,7 @@
 from backend.biz_azure_ai_search import *
 from azure_open_ai.azure_open_ai import *
+from azure_open_ai.langchain_azure_openai import *
 
-# Path: frontend/app.py
 
 import streamlit as st
 
@@ -16,8 +16,13 @@ selected_analysis = st.sidebar.radio("Select the Analysis Type", \
 st.sidebar.markdown("<hr/>",unsafe_allow_html=True) 
 
 st.sidebar.subheader("Configuration")  
-NUMBER_OF_RESULTS_TO_RETURN = st.sidebar.slider("Number of Results to Return",\
+
+use_langchain = st.sidebar.checkbox("Use Langchain", value=True)
+
+NUMBER_OF_RESULTS_TO_RETURN = st.sidebar.slider("Number of Search Results to Return",\
                                                  1, 10, 3)    
+
+
 
 user_input = st.text_input("Enter your question",
                            "What is Segmentation?")
@@ -64,5 +69,29 @@ if st.button("Search"):
                 semantic_search=True)
     
     content = "\n".join(results_content)
-    get_reply(user_input, content)
+
+    if use_langchain == False:
+        # get the reply from the LLM
+        get_reply(user_input, content)
+    else:
+         # # get the reply from the Langchain
+        if "conversation_buf" not in st.session_state:
+            st.session_state["conversation_buf"] = None
+       
+        result,conversation_buf,number_of_tokens = \
+            get_reply_langchain(st.session_state["conversation_buf"],
+                                    content,user_input)
+        st.session_state["conversation_buf"] = conversation_buf
+        st.write(result["response"])
+        st.write("----")
+        st.write("Number of tokens used:", number_of_tokens)
+
+
+     ## get the DETAILS [ CONTENT AND SOURCE ] of the reply from the LLM
     get_details(results_content, results_source)
+
+    if use_langchain == True:
+        st.markdown("### History is provided below:")
+        st.write(result["history"])
+
+

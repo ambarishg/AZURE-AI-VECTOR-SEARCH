@@ -83,9 +83,11 @@ class CustomAzureSearch:
         self.number_results_to_return = number_results_to_return
         self.number_near_neighbors = number_near_neighbors
         self.semantic_config = semantic_config
-        self.client = SearchClient(endpoint=self.endpoint, 
-                                   index_name=self.index_name,
+        self.client = SearchClient(
+                endpoint=self.endpoint, 
+                index_name=self.index_name,
                 credential=AzureKeyCredential(self.key))
+
     
     def get_results_vector_search(self,query,
                                   list_fields=None):
@@ -99,7 +101,6 @@ class CustomAzureSearch:
         
         vector_query = self.get_vectorized_query(query)
         
-        
         results = self.client.search(  
             search_text=None,  
             vector_queries=[vector_query],
@@ -107,7 +108,7 @@ class CustomAzureSearch:
             top=self.number_results_to_return,
         )  
         
-        return self.get_results_to_return(results)
+        return self.__get_results_to_return(results)
 
     def get_vectorized_query(self, query,exhaustive_knn=False):
 
@@ -149,11 +150,10 @@ class CustomAzureSearch:
         query_vector = model.encode(query)
         return query_vector
 
-    def get_results_to_return(self, results):
+    def __get_results_to_return(self, results):
 
         """This returns the results to return
         """
-
         results_to_return = []
         metadata_filename_to_return = []
         for result in results:
@@ -181,7 +181,7 @@ class CustomAzureSearch:
             top=self.number_results_to_return,
         )  
         
-        return self.get_results_to_return(results)
+        return self.__get_results_to_return(results)
     
     def get_results_exhaustive_knn(self,query,
                                   list_fields=None):
@@ -189,7 +189,7 @@ class CustomAzureSearch:
         """Provides the results of an exhaustive knn query
 
         Returns:
-            _type_: results of the query
+            [list,list]: results of the query
         """
         
         vector_query = self.get_vectorized_query(query,
@@ -203,7 +203,7 @@ class CustomAzureSearch:
             top=self.number_results_to_return,
         )  
         
-        return self.get_results_to_return(results)
+        return self.__get_results_to_return(results)
     
     def get_results_semantic_search(self,query,
                                     list_fields=None):
@@ -227,4 +227,4 @@ class CustomAzureSearch:
                     top=self.number_results_to_return,
                 )  
             
-            return self.get_results_to_return(results)
+            return self.__get_results_to_return(results)
