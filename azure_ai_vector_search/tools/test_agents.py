@@ -16,12 +16,32 @@ from langchain.agents.format_scratchpad import format_to_openai_function_message
 from langchain.agents.output_parsers import OpenAIFunctionsAgentOutputParser
 from langchain.chat_models import AzureChatOpenAI
 
+from langchain.utilities import SQLDatabase
+from langchain.agents import create_sql_agent
+from langchain.agents.agent_toolkits import SQLDatabaseToolkit
+from langchain.agents.agent_types import AgentType
+
 llm_chat = AzureChatOpenAI(
         azure_deployment=AZURE_OPENAI_DEPLOYMENT_ID_AGENTS,
         api_key=AZURE_OPENAI_KEY,
         api_version='2023-07-01-preview',
         temperature=0)
 
+db = SQLDatabase.from_uri("sqlite:///../EUROSOCCER/database.sqlite") 
+
+@tool("EuropeanSoccerTool")
+def query_european_soccer(query):
+    """Function that helps with Country, League, 
+    Match, Player, Player_Attributes, Team, Team_Attributes
+    of European soccer."""""
+    agent_executor = create_sql_agent(
+    llm=llm_chat,
+    toolkit=SQLDatabaseToolkit(db=db, llm=llm_chat),
+    verbose=True,
+    agent_type=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
+)
+    response = agent_executor.run(query)
+    return json.dumps({"result": response})
 
 @tool("AnimalKingdomTool")
 def get_animal_kingdom_results(user_input):
@@ -39,13 +59,30 @@ def add_two_numbers(num1, num2):
     """Function that adds 2 numbers."""""
     return json.dumps({"result": num1 + num2})
 
-tools = [add_two_numbers,get_animal_kingdom_results]
+tools = [add_two_numbers,get_animal_kingdom_results,query_european_soccer]
 
 prompt = ChatPromptTemplate.from_messages(
 [
-    ("system","You are very powerful assistant that helps\
-                users with questions on the Animal Kingdom.\
-    First try to use the tools provided to answer the question."),
+    ("system",
+     """
+     Answer the following questions as best you can. 
+     You have access to the following tools:
+    AnimalKingdomTool - Get information about the animal kingdom
+    AddNumbers - Add two numbers
+    Use the following format:
+
+Question: the input question you must answer
+Thought: you should always think about what to do
+Action: the action to take, should be one of [AnimalKingdomTool, 
+AddNumbers,EuropeanSoccerTool].
+Always look first in AnimalKingdomTool
+Action Input: the input to the action
+Observation: the result of the action
+... (this Thought/Action/Action Input/Observation can repeat N times)
+Thought: I now know the final answer
+Final Answer: the final answer to the original input question
+     """
+     ),
     ("user", "{input}"),
     MessagesPlaceholder(variable_name="agent_scratchpad"),
 ])
@@ -71,6 +108,26 @@ agent_executor.invoke({"input": action_input})
 
 print("##############################")
 
-action_input = "What is Segmentation with regards to Animal Kingdom?"
+action_input = "What is Segmentation?"
 
-agent_executor.invoke({"input": action_input})
+response = agent_executor.invoke({"input": action_input})
+print("##########################")
+print(response["output"])
+print("##########################")
+
+action_input = "Get the total players and add 100"
+
+response = agent_executor.invoke({"input": action_input})
+print("##########################")
+print(response["output"])
+print("##########################")
+
+
+action_input = "Get the average height of players in European Soccer \
+and add 100."
+
+response = agent_executor.invoke({"input": action_input})
+
+print("##########################")
+print(response["output"])
+print("##########################")
