@@ -45,10 +45,17 @@ def query_european_soccer(query):
 
 @tool("AnimalKingdomTool")
 def get_animal_kingdom_results(user_input):
-    """Function that returns information about the animal kingdom"""
+    """
+    Function that returns information about the animal kingdom
+
+    Args:
+        user_input (str): The user's input for the animal kingdom search.
+
+    Returns:
+        str: A JSON string containing the results of the animal kingdom search.
+    """
     
-    results_content,results_source = \
-    get_results_vector_search(user_input)
+    results_content, results_source = get_results_vector_search(user_input)
 
     content = "\n".join(results_content)
     results_final = generate_reply_from_context(user_input, content, [])

@@ -8,3 +8,4 @@ tenacity
 langchain
 tiktoken
 streamlit_chat
+pytest
