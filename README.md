@@ -1,5 +1,5 @@
 
-# Step I : Create Embeddings 
+# Step I : Create Embeddings and Metadata
 
 1A. Create Embeddings with the notebook `azure_ai_vector_search\notebooks\00.create_embeddings.ipynb`       
 1B. Create Azure OPEN AI Embeddings with the notebook `azure_ai_vector_search\notebooks\00.create_embeddings_azure.ipynb`    
@@ -7,7 +7,7 @@
 The embeddings are created in  `azure_ai_vector_search\output`   
 The embeddings are `docvectors.json` and `docvectors_azure.json`   
 
-# Step II : Create Index    
+# Step II : Create Index and Insert Documents[ Embeddings and Metadata  ]         
 
 2. Create the index with the notebook `azure_ai_vector_search\notebooks\01.azure_ai_vector_search_index_creation.ipynb`   
 
