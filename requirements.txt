@@ -9,3 +9,5 @@ langchain
 tiktoken
 streamlit_chat
 pytest
+azure-storage-blob
+requests
